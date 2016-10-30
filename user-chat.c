@@ -37,13 +37,13 @@ int main()
 	while(1)
 	{
 		test_in = inputs;
-		timeout.tv_sec = 3;
+		timeout.tv_sec = 1500;
 		timeout.tv_usec = 0;
 		result = select(sockfd+1, &test_in, NULL, NULL, &timeout);
 		
 		if(result==0)
 		{
-			printf("Timeout! :(\n");
+			//printf("Timeout! :(\n");
 			continue;
 		}
 
@@ -72,7 +72,7 @@ int main()
 				if(read_len>0)
 				{
 					message[read_len] = '\0';
-					printf("User2: %s\n", message);
+					printf(">> %s\n", message);
 				}
 			}
 		}

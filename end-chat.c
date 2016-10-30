@@ -49,11 +49,11 @@ int main(){
 	{
 		printf("Waiting\n");
 		clientfd = accept(sockfd,(struct sockaddr*)&cadd,&t);
-			FD_SET(clientfd,&inputs);
+		FD_SET(clientfd,&inputs);
 		while(1){
 			test_in = inputs;
 			test_out = outputs;
-			timeout.tv_sec = 3;
+			timeout.tv_sec = 30;
 			timeout.tv_usec = 0;
 			result = select(clientfd+1, &test_in, NULL, NULL, &timeout);
 			

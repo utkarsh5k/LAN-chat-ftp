@@ -55,7 +55,7 @@ int main()
 
 		else
 		{
-			if(FD_ISSET(0,&inputs))
+			if(FD_ISSET(0,&test_in))
 			{
 				ioctl(0, FIONREAD, &read_len);
 				read_len = read(0, message, 1024*sizeof(char));
@@ -66,7 +66,7 @@ int main()
 				}
 			}
 	
-			if(FD_ISSET(sockfd, &outputs))
+			if(FD_ISSET(sockfd, &test_in))
 			{
 				read_len = read(sockfd, message, 1024*sizeof(char));
 				if(read_len>0)

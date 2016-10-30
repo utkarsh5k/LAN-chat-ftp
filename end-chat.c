@@ -49,17 +49,17 @@ int main(){
 	{
 		printf("Waiting\n");
 		clientfd = accept(sockfd,(struct sockaddr*)&cadd,&t);
-		if(clientfd>0){
-			FD_SET(clientfd,&outputs);
+			FD_SET(clientfd,&inputs);
+		while(1){
 			test_in = inputs;
 			test_out = outputs;
 			timeout.tv_sec = 3;
 			timeout.tv_usec = 0;
-			result = select(clientfd+1, &test_in, &test_out, NULL, &timeout);
+			result = select(clientfd+1, &test_in, NULL, NULL, &timeout);
 			
 			if(result==0)
 			{
-				printf("Timeout! :(\n");
+				printf("Timeout_lol! :(\n");
 				continue;
 			}
 
@@ -78,22 +78,17 @@ int main(){
 					{
 						read_len = read(0, message, 1024*sizeof(char));
 						message[read_len] = '\0';
-						send(clientfd, message, read_len*sizeof(char), 0);
+						write(clientfd, message, read_len*sizeof(char));
 					}
 				}
 
-				if(FD_ISSET(clientfd, &test_out))
+				if(FD_ISSET(clientfd, &test_in))
 				{
-					read_len = recv(clientfd, message, 1024*sizeof(char), 0);
-					if(read_len==-1)
-					{
-						perror("Error in receiving!");
-						exit(0);
-					}
-					else if(read_len > 0)
+					read_len = read(clientfd, message, 1024*sizeof(char));
+					if(read_len > 0)
 					{	
 						message[read_len] = '\0';
-						printf("User2: %s\n", message);
+						printf("User1: %s\n", message);
 					}
 				}
 			}

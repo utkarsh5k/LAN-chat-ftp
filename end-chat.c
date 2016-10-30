@@ -71,7 +71,7 @@ int main(){
 
 			else
 			{
-				if(FD_ISSET(0, &inputs))
+				if(FD_ISSET(0, &test_in))
 				{
 					ioctl(0, FIONREAD, &read_len);
 					if(read_len > 0)
@@ -82,7 +82,7 @@ int main(){
 					}
 				}
 
-				if(FD_ISSET(clientfd, &outputs))
+				if(FD_ISSET(clientfd, &test_out))
 				{
 					read_len = recv(clientfd, message, 1024*sizeof(char), 0);
 					if(read_len==-1)

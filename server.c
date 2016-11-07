@@ -11,6 +11,12 @@
 #include<netinet/in.h>
 #include<arpa/inet.h>
 
+typedef struct m{
+	int type, length;
+	char fname[20];
+	char buffer[1024];
+}message;
+
 #define BACKLOG 10
 
 int main()
@@ -19,7 +25,7 @@ int main()
 	int result, length = 100, read_len, sockfd, u1, u2, maxfd;
 	fd_set inputs, outputs, test_in, test_out;
 	socklen_t t;
-	char message[1024];
+	message msg;
 
 	FD_ZERO(&inputs);
 	FD_ZERO(&outputs);
@@ -48,14 +54,18 @@ int main()
 	}
 //The server must establish connection with both the users before it starts receiving messages. 
 	u1 = accept(sockfd,(struct sockaddr*)&user1,&t);
-	strcpy(message, "Waiting for the other user to connect...");
-	write(u1, message, strlen(message)*sizeof(char));
+	strcpy(msg.buffer, "Waiting for the other user to connect...");
+	msg.type = 1;
+	msg.length = strlen(msg.buffer);
+	write(u1, &msg, sizeof(message));
 	
 	u2 = accept(sockfd,(struct sockaddr*)&user2,&t);
 	
-	strcpy(message, "You are now connected!");
-	write(u1, message, strlen(message)*sizeof(char));
-	write(u2, message, strlen(message)*sizeof(char));
+	strcpy(msg.buffer, "You are now connected!");
+	msg.type = 1;
+	msg.length = strlen(msg.buffer);
+	write(u1, &msg, sizeof(message));
+	write(u2, &msg, sizeof(message));
 	
 	FD_SET(u1, &inputs);
 	FD_SET(u2, &inputs);
@@ -81,21 +91,19 @@ int main()
 		{
 			if(FD_ISSET(u1, &test_in))
 			{
+				read_len = read(u1, &msg, sizeof(message));
 				if(read_len > 0)
 				{
-					read_len = read(u1, message, 1024*sizeof(char));
-					message[read_len] = '\0';
-					write(u2, message, read_len*sizeof(char));
+					write(u2, &msg, sizeof(message));
 				}
 			}
 
 			if(FD_ISSET(u2, &test_in))
 			{
-				read_len = read(u2, message, 1024*sizeof(char));
+				read_len = read(u2, &msg, sizeof(message));
 				if(read_len > 0)
 				{	
-					message[read_len] = '\0';
-					write(u1, message, read_len*sizeof(char));
+					write(u1, &msg, sizeof(message));
 				}
 			}
 		}
